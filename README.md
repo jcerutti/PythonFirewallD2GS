@@ -43,3 +43,8 @@ process_monitor_thread: Runs the process_monitor() function.
 The threads are started using thread.start().
 
 A message is printed indicating that the script is scanning packets on port 4000.
+
+![pack1](https://github.com/jcerutti/PythonFirewallD2GS/assets/20859048/e60a2b1e-ab7e-46ee-9aa9-b6686d2c2968)
+
+![pack2](https://github.com/jcerutti/PythonFirewallD2GS/assets/20859048/d4f73b0f-5678-44c4-81de-aac4c9bde0b8)
+
