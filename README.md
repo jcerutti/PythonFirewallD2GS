@@ -5,7 +5,7 @@ This code is an example of a simple firewall implementation in Python. It utiliz
 The necessary libraries are imported: pydivert for capturing packets, threading for running packet capture and process monitoring concurrently, subprocess for restarting processes, time for time-related operations, psutil for process-related operations, ctypes for setting the console window title, and json for handling JSON file operations.
 
 to run the script under windows install python 3.11 (is the one i used for this code)
-and form a CMD or powershell install the dependencies:
+and from a CMD or powershell install the dependencies:
 
 pip install pydivert
 
