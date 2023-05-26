@@ -6,10 +6,18 @@ import psutil
 import ctypes
 import json
 
-BAN_DURATION = 300  # Ban duration in seconds
-BANNED_IPS_FILE = "banned_ips.json"  # File to store banned IPs
-MAX_PACKETS_PER_SECOND = 1000  # Maximum allowed packets per second
-BLOCKED_PACKET_THRESHOLD = 10  # Number of blocked packets to trigger IP ban
+# Read the configuration from the JSON file
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
+
+# Extract the configuration values
+BAN_DURATION = config.get("BAN_DURATION", 300)
+BANNED_IPS_FILE = config.get("BANNED_IPS_FILE", "banned_ips.json")
+MAX_PACKETS_PER_SECOND = config.get("MAX_PACKETS_PER_SECOND", 1000)
+BLOCKED_PACKET_THRESHOLD = config.get("BLOCKED_PACKET_THRESHOLD", 10)
+PROCESS_PATH = config.get("PROCESS_PATH", r"C:\Users\Mantenimiento\Desktop\Server\D2GS\D2GS.exe")
+BLOCKED_PORT = config.get("BLOCKED_PORT", 4000)
+PROCESS_NAME = config.get("PROCESS_NAME", "D2GS.exe")
 
 # Set the window title
 ctypes.windll.kernel32.SetConsoleTitleW("Revenge Firewall")
@@ -33,7 +41,7 @@ def save_banned_ips(banned_ips):
 
 def block_packet(packet, w):
     payload = bytes(packet.tcp.payload)
-    if packet.tcp.dst_port == 4000 and (payload.startswith(b'\xFF\x01') or payload == b'\xFF\x01\xFF\x01\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00'):
+    if packet.tcp.dst_port == BLOCKED_PORT and (payload.startswith(b'\xFF\x01') or payload == b'\xFF\x01\xFF\x01\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00'):
         source_ip = packet.src_addr
 
         # Check if the source IP is banned
@@ -79,7 +87,7 @@ def block_packet(packet, w):
 
 def packet_capture():
     print("Starting packet capture...")
-    with pydivert.WinDivert("tcp.DstPort == 4000 and tcp.PayloadLength > 0") as win_divert:
+    with pydivert.WinDivert(f"tcp.DstPort == {BLOCKED_PORT} and tcp.PayloadLength > 0") as win_divert:
         for packet in win_divert:
             block_packet(packet, win_divert)
 
@@ -98,12 +106,10 @@ def restart_process(process_name, process_path):
 
 def process_monitor():
     while True:
-        process_name = "D2GS.exe"
-        process_running = any(proc.name() == process_name for proc in psutil.process_iter())
+        process_running = any(proc.name() == PROCESS_NAME for proc in psutil.process_iter())
 
         if not process_running:
-            process_path = r"C:\Users\Mantenimiento\Desktop\Server\D2GS\D2GS.exe"
-            restart_process(process_name, process_path)
+            restart_process(PROCESS_NAME, PROCESS_PATH)
 
         time.sleep(5)
 
@@ -118,4 +124,4 @@ process_monitor_thread = threading.Thread(target=process_monitor)
 packet_capture_thread.start()
 process_monitor_thread.start()
 
-print("Scanning packets on port 4000...")
+print(f"Scanning packets on port {BLOCKED_PORT}...")
