@@ -1,0 +1,9 @@
+{
+  "BAN_DURATION": 300,
+  "BANNED_IPS_FILE": "banned_ips.json",
+  "MAX_PACKETS_PER_SECOND": 1000,
+  "BLOCKED_PACKET_THRESHOLD": 10,
+  "PROCESS_PATH": "C:\\Users\\Mantenimiento\\Desktop\\Server\\D2GS\\D2GS.exe",
+  "BLOCKED_PORT": 4000,
+  "PROCESS_NAME": "D2GS.exe"
+}
