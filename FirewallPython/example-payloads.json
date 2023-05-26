@@ -1,0 +1,8 @@
+{
+  "starting_with": [
+    "FF 01",
+    "FF 02",
+    "AA BB CC"
+  ],
+  "fixed": "FF 01 FF 01 AA A1 B1 00 AA A1 B1 00 AA A1 B1 00 AA A1 B1 00 AA A1 B1 00 AA A1 B1 00 AA A1 B1 00"
+}
