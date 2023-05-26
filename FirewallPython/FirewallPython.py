@@ -10,6 +10,10 @@ import json
 with open("config.json", "r") as config_file:
     config = json.load(config_file)
 
+# Read the payloads from the JSON file
+with open("payloads.json", "r") as payloads_file:
+    payloads = json.load(payloads_file)
+
 # Extract the configuration values
 BAN_DURATION = config.get("BAN_DURATION", 300)
 BANNED_IPS_FILE = config.get("BANNED_IPS_FILE", "banned_ips.json")
@@ -41,7 +45,7 @@ def save_banned_ips(banned_ips):
 
 def block_packet(packet, w):
     payload = bytes(packet.tcp.payload)
-    if packet.tcp.dst_port == BLOCKED_PORT and (payload.startswith(b'\xFF\x01') or payload == b'\xFF\x01\xFF\x01\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00\xAA\xA1\xB1\x00'):
+    if packet.tcp.dst_port == BLOCKED_PORT and (payload.startswith(tuple(bytes.fromhex(p) for p in payloads["starting_with"])) or payload == bytes.fromhex(payloads["fixed"])):
         source_ip = packet.src_addr
 
         # Check if the source IP is banned
